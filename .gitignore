@@ -14,9 +14,11 @@
 .coverage.*
 .eggs/
 .hypothesis/
+.idea
 .installed.cfg
 .Python
 .tox/
+/venv*
 __pycache__/
 build/
 coverage.xml
