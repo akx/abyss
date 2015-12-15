@@ -20,7 +20,7 @@ class StatProfiler(BackgroundActivity):
         interval = self.interval
         ignored_thread_ids = set(self.ignored_thread_ids)
         ignored_thread_ids.add(threading.current_thread().ident)
-        while not stop_event.wait(timeout=interval):
+        def capture():
             time = get_time()
             stacks = dict(
                 (thread_id, format_frames(frame, 1))
@@ -29,4 +29,7 @@ class StatProfiler(BackgroundActivity):
                 if thread_id not in ignored_thread_ids
             )
             if stacks:
-                queue.put((time, stacks))
+                queue.put((time, "stacks", stacks))
+        while not stop_event.wait(timeout=interval):
+            capture()
+        capture()
