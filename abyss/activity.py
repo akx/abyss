@@ -5,7 +5,7 @@ import threading
 
 class BackgroundActivity(object):
     def __init__(self):
-        self.log = logging.getLogger(self.__class__.__name__)
+        self.log = logging.getLogger("abyss." + self.__class__.__name__)
         self.stop_event = threading.Event()
         self.stopped_event = threading.Event()
         self._thread = None

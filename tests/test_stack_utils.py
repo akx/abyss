@@ -19,7 +19,7 @@ def a(fn, val):
 
 def test_get_stack():
     def test():
-        funcs = [f[1] for f in format_frames(inspect.currentframe(), 1)[:10]]
+        funcs = [f.func for f in format_frames(inspect.currentframe(), 1)[:10]]
         assert funcs == ['b', 'a', 'b', 'a', 'b', 'a', 'b', 'b', 'a', 'test_get_stack']
 
     a(test, 16)
@@ -43,7 +43,7 @@ def test_diff_stacks():
     d(stacks)
     stacks.append(format_frames(inspect.currentframe()))
     stacks = [s[::-1] for s in stacks]
-    stacks = remove_common(stacks, True)
+    stacks = remove_common(stacks)
     assert list(map(len, stacks)) == [0, 1, 0, 1, 2, 1, 0]
     assert len(stacks) == 7
 
@@ -60,4 +60,4 @@ def test_diff_stacks():
 
 
 def get_event_and_func(events):
-    return [(e[0], e[1][1]) for e in events]
+    return [(e[0], e[1].func) for e in events]

@@ -1,22 +1,55 @@
+from collections import namedtuple
 from inspect import getfile
 import os
 import re
+try:
+    from inspect import getattr_static
+except ImportError:
+    getattr_static = getattr
 
 LIB_RE = re.compile("^.*site-packages/", re.I)
 
+FrameInfo = namedtuple("FrameInfo", "id filename func lineno is_generator classname")
 
-def format_frames(frame, offset=0):
+
+CLASSNAME_CACHE = {}
+
+def get_classname(filename, frame):
+    if frame.f_locals:
+        key = (filename, frame.f_lineno)
+        if key in CLASSNAME_CACHE:
+            return CLASSNAME_CACHE[key]
+        self = frame.f_locals.get("self")
+        if self is not None:
+            cls = getattr(self, "__class__", None)
+        else:
+            cls = frame.f_locals.get("cls")
+        CLASSNAME_CACHE[key] = classname = getattr(cls, "__name__", None)
+        return classname
+
+
+def format_frames(frame, offset=0, with_class=False):
     formatted = []
     while frame:
         filename = LIB_RE.sub("%/", getfile(frame).replace(os.sep, "/"))
-        formatted.append((filename, frame.f_code.co_name, frame.f_lineno))
+        classname = (with_class and get_classname(filename, frame))
+        formatted.append(FrameInfo(
+            id(frame),
+            filename,
+            frame.f_code.co_name,
+            frame.f_lineno,
+            (frame.f_code.co_flags & 0x20),
+            classname
+        ))
         frame = frame.f_back
     return formatted[offset:]
 
 
-def remove_common(stacks, ignore_lines=False):
-    cut = (2 if ignore_lines else 3)
-    while all(stacks) and all((stack[0][:cut] == stacks[0][0][:cut]) for stack in stacks):
+def remove_common(stacks):
+    """
+    :type stacks: list[list[FrameInfo]]
+    """
+    while all(stacks) and all((stack[0].id == stacks[0][0].id) for stack in stacks):
         for stack in stacks:
             stack.pop(0)
     return stacks
