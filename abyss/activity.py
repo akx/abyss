@@ -21,6 +21,8 @@ class BackgroundActivity(object):
         pass
 
     def stop(self, timeout=None):
+        if not self._thread:  # Never started.
+            return
         self.log.info("Stopping...")
         self.stop_event.set()
         self.stopped_event.wait(timeout=timeout)

@@ -44,6 +44,8 @@ class QueueProcessor(BackgroundActivity):
                     for type, frame in diff_stacks(last_stack_i, new_stack_i):
                         if frame.classname:
                             name = "%s:%s" % (frame.classname, frame.func)
+                        elif frame.func == "<module>":
+                            name = frame.filename
                         else:
                             name = frame.func
                         self.emit_event({
@@ -51,7 +53,7 @@ class QueueProcessor(BackgroundActivity):
                             "ts": ts,
                             "tid": thread_id,
                             "pid": 0,
-                            "ph": ("B" if type == "enter" else "E")
+                            "ph": ("B" if type == "enter" else "E"),
                         })
                     new_last_stacks[thread_id] = new_stack
                 last_stacks = new_last_stacks
