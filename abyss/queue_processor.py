@@ -26,6 +26,7 @@ class QueueProcessor(BackgroundActivity):
             except Empty:
                 if stop_event.isSet():
                     break
+                continue
             ts *= 1000000.0  # seconds to microseconds
             if type == "stacks":
                 stacks = payload

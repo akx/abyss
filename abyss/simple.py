@@ -14,14 +14,18 @@ from abyss.stat_profiler import StatProfiler
 
 
 class SimpleProfiler(object):
-    def __init__(self, output_file, interval=0.005):
+    def __init__(self, output_file, interval=0):
         if isinstance(output_file, six.string_types):
             output_file = open(output_file, "wb")
         self.queue = Queue()
         self.output_file = output_file
         self.queue_proc = QueueProcessor(queue=self.queue, fd=self.output_file)
         self.queue_proc.start()
-        self.stat_prof = StatProfiler(queue=self.queue, interval=0, ignored_thread_ids=(self.queue_proc.id(),))
+        self.stat_prof = StatProfiler(
+            queue=self.queue,
+            interval=interval,
+            ignored_thread_ids=(self.queue_proc.id(),),
+        )
 
     def start(self):
         self.stat_prof.start()
