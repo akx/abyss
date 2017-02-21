@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import datetime
+import os
+from contextlib import contextmanager
+
 import six
 import sys
 
@@ -58,3 +62,16 @@ def post_event(text):
     profiler = get_default()
     if profiler:
         profiler.post_event(text)
+
+
+@contextmanager
+def profiling(output_file=None, **kwargs):
+    if not output_file:
+        output_file = 'abyss-%08x-%s.tracing' % (os.getpid(), datetime.datetime.now().isoformat().replace(':', '-'))
+    old_default = get_default()
+    profiler = SimpleProfiler.new_default(output_file=output_file, **kwargs)
+    profiler.start()
+    yield
+    profiler.stop()
+    sys.stderr.write('** Abyss: Wrote to %s\n' % output_file)
+    set_default(old_default)
