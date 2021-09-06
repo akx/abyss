@@ -1,11 +1,7 @@
-from collections import namedtuple
-from inspect import getfile
 import os
 import re
-try:
-    from inspect import getattr_static
-except ImportError:
-    getattr_static = getattr
+from collections import namedtuple
+from inspect import getfile
 
 LIB_RE = re.compile("^.*site-packages/", re.I)
 
@@ -13,6 +9,7 @@ FrameInfo = namedtuple("FrameInfo", "id filename func lineno is_generator classn
 
 
 CLASSNAME_CACHE = {}
+
 
 def get_classname(filename, frame):
     if frame.f_locals:
@@ -32,15 +29,17 @@ def format_frames(frame, offset=0, with_class=False):
     formatted = []
     while frame:
         filename = LIB_RE.sub("%/", getfile(frame).replace(os.sep, "/"))
-        classname = (with_class and get_classname(filename, frame))
-        formatted.append(FrameInfo(
-            id(frame),
-            filename,
-            frame.f_code.co_name,
-            frame.f_lineno,
-            (frame.f_code.co_flags & 0x20),
-            classname
-        ))
+        classname = with_class and get_classname(filename, frame)
+        formatted.append(
+            FrameInfo(
+                id(frame),
+                filename,
+                frame.f_code.co_name,
+                frame.f_lineno,
+                (frame.f_code.co_flags & 0x20),
+                classname,
+            )
+        )
         frame = frame.f_back
     return formatted[offset:]
 

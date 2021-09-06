@@ -1,25 +1,17 @@
-# -*- coding: utf-8 -*-
 import datetime
 import os
-from contextlib import contextmanager
-
-import six
 import sys
-
-from abyss.time_utils import get_time
-
-try:
-    from queue import Queue
-except ImportError:
-    from six.moves.queue import Queue
+from contextlib import contextmanager
+from queue import Queue
 
 from abyss.queue_processor import QueueProcessor
 from abyss.stat_profiler import StatProfiler
+from abyss.time_utils import get_time
 
 
-class SimpleProfiler(object):
+class SimpleProfiler:
     def __init__(self, output_file, interval=0):
-        if isinstance(output_file, six.string_types):
+        if isinstance(output_file, str):
             output_file = open(output_file, "wb")
         self.queue = Queue()
         self.output_file = output_file
@@ -55,7 +47,7 @@ def get_default():
 
 
 def set_default(profiler):
-    setattr(sys, "_default_abyss", profiler)
+    sys._default_abyss = profiler
 
 
 def post_event(text):
@@ -67,11 +59,14 @@ def post_event(text):
 @contextmanager
 def profiling(output_file=None, **kwargs):
     if not output_file:
-        output_file = 'abyss-%08x-%s.tracing' % (os.getpid(), datetime.datetime.now().isoformat().replace(':', '-'))
+        output_file = "abyss-{:08x}-{}.tracing".format(
+            os.getpid(),
+            datetime.datetime.now().isoformat().replace(":", "-"),
+        )
     old_default = get_default()
     profiler = SimpleProfiler.new_default(output_file=output_file, **kwargs)
     profiler.start()
     yield
     profiler.stop()
-    sys.stderr.write('** Abyss: Wrote to %s\n' % output_file)
+    sys.stderr.write(f"** Abyss: Wrote to {output_file}\n")
     set_default(old_default)

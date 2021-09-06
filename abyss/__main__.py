@@ -1,5 +1,6 @@
-import sys
 import runpy
+import sys
+
 from abyss.simple import profiling
 
 
@@ -10,5 +11,5 @@ def main():
         runpy.run_path(sys.argv[0], run_name="__main__")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

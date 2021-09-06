@@ -1,6 +1,6 @@
 import inspect
 
-from abyss.stack_utils import format_frames, diff_stacks, remove_common
+from abyss.stack_utils import diff_stacks, format_frames, remove_common
 
 
 def b(fn, val):
@@ -20,7 +20,7 @@ def a(fn, val):
 def test_get_stack():
     def test():
         funcs = [f.func for f in format_frames(inspect.currentframe(), 1)[:10]]
-        assert funcs == ['b', 'a', 'b', 'a', 'b', 'a', 'b', 'b', 'a', 'test_get_stack']
+        assert funcs == ["b", "a", "b", "a", "b", "a", "b", "b", "a", "test_get_stack"]
 
     a(test, 16)
 

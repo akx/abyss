@@ -1,10 +1,8 @@
-# -- encoding: UTF-8 --
 import json
 import random
 import time
+from io import BytesIO
 from queue import Queue
-
-from six import BytesIO
 
 from abyss.queue_processor import QueueProcessor
 from abyss.stat_profiler import StatProfiler

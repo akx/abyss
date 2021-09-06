@@ -1,9 +1,7 @@
-# -- encoding: UTF-8 --
 import time
-
-from abyss.stat_profiler import StatProfiler
 from queue import Queue
 
+from abyss.stat_profiler import StatProfiler
 from tests.utils import flush_queue
 
 

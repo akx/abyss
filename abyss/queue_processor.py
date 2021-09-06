@@ -1,8 +1,5 @@
-# -- encoding: UTF-8 --
 import json
-
-from six import text_type
-from six.moves.queue import Empty
+from queue import Empty
 
 from abyss.activity import BackgroundActivity
 from abyss.stack_utils import diff_stacks, remove_common
@@ -10,7 +7,7 @@ from abyss.stack_utils import diff_stacks, remove_common
 
 class QueueProcessor(BackgroundActivity):
     def __init__(self, queue, fd):
-        super(QueueProcessor, self).__init__()
+        super().__init__()
         self.queue = queue
         self.fd = fd
         assert hasattr(fd, "write")
@@ -36,7 +33,8 @@ class QueueProcessor(BackgroundActivity):
                     if new_stack and new_stack[-1].is_generator:
                         self.log.debug(
                             "Gluing generator stack of length %d to old stack %d",
-                            len(new_stack), len(last_stack)
+                            len(new_stack),
+                            len(last_stack),
                         )
                         new_stack = new_stack + last_stack
                     last_stack_i = last_stack[::-1]
@@ -44,28 +42,32 @@ class QueueProcessor(BackgroundActivity):
                     remove_common([last_stack_i, new_stack_i])
                     for type, frame in diff_stacks(last_stack_i, new_stack_i):
                         if frame.classname:
-                            name = "%s:%s" % (frame.classname, frame.func)
+                            name = f"{frame.classname}:{frame.func}"
                         elif frame.func == "<module>":
                             name = frame.filename
                         else:
                             name = frame.func
-                        self.emit_event({
-                            "name": name,
-                            "ts": ts,
-                            "tid": thread_id,
-                            "pid": 0,
-                            "ph": ("B" if type == "enter" else "E"),
-                        })
+                        self.emit_event(
+                            {
+                                "name": name,
+                                "ts": ts,
+                                "tid": thread_id,
+                                "pid": 0,
+                                "ph": ("B" if type == "enter" else "E"),
+                            }
+                        )
                     new_last_stacks[thread_id] = new_stack
                 last_stacks = new_last_stacks
             elif type == "instant":
-                self.emit_event({
-                    "name": text_type(payload),
-                    "ts": ts,
-                    "pid": 0,
-                    "ph": "i",
-                    "s": "g",  # TODO: Support other scopes?
-                })
+                self.emit_event(
+                    {
+                        "name": str(payload),
+                        "ts": ts,
+                        "pid": 0,
+                        "ph": "i",
+                        "s": "g",  # TODO: Support other scopes?
+                    }
+                )
 
     def stopped(self):
         self.log.info("Emitted %d entries.", self.n_emitted)

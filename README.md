@@ -4,7 +4,7 @@ abyss
 ... is a statistical profiler and Chrome tracing file generator for Python.
 
 * Status: WIP but works for me!
-* Compatibility: tested on Python 3.5 and 3.6
+* Compatibility: Python 3.6+
 
 Installation
 ------------

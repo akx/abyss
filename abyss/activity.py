@@ -1,9 +1,8 @@
-# -- encoding: UTF-8 --
 import logging
 import threading
 
 
-class BackgroundActivity(object):
+class BackgroundActivity:
     def __init__(self):
         self.log = logging.getLogger("abyss." + self.__class__.__name__)
         self.stop_event = threading.Event()
@@ -12,7 +11,7 @@ class BackgroundActivity(object):
 
     def start(self):
         if self._thread:
-            raise ValueError("Can't restart %r" % self)
+            raise ValueError(f"Can't restart {self!r}")
         self._thread = thread = threading.Thread(name=repr(self), target=self._wrap_run)
         thread.daemon = True
         thread.start()
@@ -37,7 +36,7 @@ class BackgroundActivity(object):
             self.stopped()
 
     def run(self):
-        raise NotImplementedError("Implement %r.run()" % self)
+        raise NotImplementedError(f"Implement {self!r}.run()")
 
     def id(self):
         if self._thread:
