@@ -66,7 +66,9 @@ def profiling(output_file=None, **kwargs):
     old_default = get_default()
     profiler = SimpleProfiler.new_default(output_file=output_file, **kwargs)
     profiler.start()
-    yield
-    profiler.stop()
-    sys.stderr.write(f"** Abyss: Wrote to {output_file}\n")
-    set_default(old_default)
+    try:
+        yield
+    finally:
+        profiler.stop()
+        sys.stderr.write(f"** Abyss: Wrote to {output_file}\n")
+        set_default(old_default)
