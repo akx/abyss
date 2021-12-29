@@ -4,3 +4,6 @@ flake8-bugbear
 flake8-isort
 pip-tools
 pytest<7.0
+Django
+django-stubs
+pytest-django

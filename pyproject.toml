@@ -1,2 +1,13 @@
 [isort]
 profile = "black"
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+exclude = "(venv|.pytest_cache|.git|.mypy_cache|__pycache__|.idea)/$"
+
+[tool.django-stubs]
+django_settings_module = "djangoapp.settings"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "djangoapp.settings"
+norecursedirs = "venv .git .mypy_cache .pytest_cache dist __pycache__ .idea"
