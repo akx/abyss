@@ -3,4 +3,4 @@ flake8
 flake8-bugbear
 flake8-isort
 pip-tools
-pytest
+pytest<7.0
