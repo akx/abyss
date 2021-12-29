@@ -11,3 +11,10 @@ django_settings_module = "djangoapp.settings"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "djangoapp.settings"
 norecursedirs = "venv .git .mypy_cache .pytest_cache dist __pycache__ .idea"
+
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
