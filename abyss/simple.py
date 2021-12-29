@@ -59,10 +59,7 @@ def post_event(text):
 @contextmanager
 def profiling(output_file=None, **kwargs):
     if not output_file:
-        output_file = "abyss-{:08x}-{}.tracing".format(
-            os.getpid(),
-            datetime.datetime.now().isoformat().replace(":", "-"),
-        )
+        output_file = f"abyss-{datetime.datetime.now().isoformat().replace(':', '-')}-{os.getpid():d}.tracing"
     old_default = get_default()
     profiler = SimpleProfiler.new_default(output_file=output_file, **kwargs)
     profiler.start()
