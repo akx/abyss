@@ -27,8 +27,28 @@ Abyss will generate a tracing file you can load in `chrome://tracing`
 Usage - Django middleware
 -------------------------
 
-Add `abyss.django.abyss_middleware` to your `MIDDLEWARE`.
+Add `abyss.django.AbyssMiddleware` to your `MIDDLEWARE`.
 
-Abyss will generate a tracing file in `abyss-django/` for every request.
+By default, the middleware will generate a tracing file for every request that
+either has any truthy value in a header or a query parameter named `abyss`.
 
-You can load these in `chrome://tracing`.
+The generated files will be saved to the configured django media storage
+backend, with a prefix of `abyss-django/`.
+
+You can customize the behavior easily by subclassing the middleware and
+modifying a few variables or functions, for example:
+
+```python
+from abyss.django import AbyssMiddleware
+from django.http import HttpRequest
+
+
+class CustomAbyssMiddleware(AbyssMiddleware):
+    STORAGE_CLASS = "storages.backends.s3boto3.S3Boto3Storage"
+    FILENAME_PREFIX = "traces/"
+
+    def should_profile_request(self, request: HttpRequest) -> bool:
+        return super().should_profile_request(request) and request.user.is_superuser
+```
+
+The tracing files can be loaded in `chrome://tracing`.
