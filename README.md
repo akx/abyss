@@ -51,4 +51,8 @@ class CustomAbyssMiddleware(AbyssMiddleware):
         return super().should_profile_request(request) and request.user.is_superuser
 ```
 
-The tracing files can be loaded in `chrome://tracing`.
+How to analyze tracing files
+----------------------------
+
+* [ui.perfetto.dev](https://ui.perfetto.dev/) is pretty snazzy in general.
+* The Chrome browser also has a built-in tool for analyzing these files: `chrome://tracing`.
